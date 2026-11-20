@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.xcresult
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Local signing settings (your Apple team ID), see Config/Local.xcconfig.example
+Config/Local.xcconfig
+
+# Release artifacts
+dist/
