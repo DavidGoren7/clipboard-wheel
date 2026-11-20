@@ -43,7 +43,7 @@ Everything stays on your Mac: items are stored in `~/Library/Application Support
 Requirements: macOS 14 or later and Xcode 16 or later.
 
 ```bash
-git clone https://github.com/<you>/clipboard-wheel.git
+git clone https://github.com/DavidGoren7/clipboard-wheel.git
 cd clipboard-wheel
 open ClipboardWheel.xcodeproj
 ```
