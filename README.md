@@ -2,7 +2,7 @@
 
 A radial clipboard picker for macOS. **Tap ⌘V** and it pastes like normal. **Hold ⌘V** and a glass wheel of your recent copies pops up at your cursor. Move toward a slice and let go to paste it.
 
-> Status: early development. See the build order below for what's done.
+> Status: early development (v0.1 in progress).
 
 ## How it works
 
@@ -28,7 +28,9 @@ Open Settings from the wheel icon in the menu bar.
 | Feedback | Sound tick and trackpad haptic as you move between slices |
 | Launch at login | On by default |
 
-The menu bar icon also has **Pause** (hands ⌘V back to macOS), **Pin current clipboard**, **Clear history**, and **Quit**.
+The menu bar icon also has **Pause** (hands ⌘V back to macOS and stops recording copies), **Pin current clipboard**, **Clear history**, and **Quit**. Opening the app again from Spotlight also shows Settings.
+
+In **history only** mode, pinned items are kept but hidden and pinning is off. In **pinned only** mode, the wheel shows just your pins and new copies don't change it (use **Pin current clipboard** to add more). Pasting from the wheel pastes plain text, without formatting.
 
 ## Permissions
 
@@ -46,7 +48,13 @@ cd clipboard-wheel
 open ClipboardWheel.xcodeproj
 ```
 
-Then press ⌘R. To keep the Accessibility permission across rebuilds, sign with your Apple ID: copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and put your team ID in it (Xcode → Settings → Accounts shows it). Without it, the app is signed "to run locally" and macOS may ask for Accessibility again after each rebuild.
+Then press ⌘R. Or build a release copy, install it in Applications, and launch it:
+
+```bash
+scripts/install.sh
+```
+
+To keep the Accessibility permission across rebuilds, sign with your Apple ID: copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and put your team ID in it (Xcode → Settings → Accounts shows it). Without it, the app is signed "to run locally" and macOS may ask for Accessibility again after each rebuild.
 
 The project file is generated from `project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen). After changing `project.yml`, run `xcodegen generate`.
 
