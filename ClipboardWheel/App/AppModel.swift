@@ -34,17 +34,18 @@ final class AppModel {
             }
             .store(in: &cancellables)
 
+        let isDemo = CommandLine.arguments.contains("--show-wheel")
         if permissions.isAccessibilityTrusted {
             startInterceptor()
         } else {
-            onboardingWindow.show()
+            if !isDemo { onboardingWindow.show() }
             permissions.waitForAccessibility { [weak self] in
                 self?.startInterceptor()
                 self?.onboardingWindow.close()
             }
         }
 
-        if CommandLine.arguments.contains("--show-wheel") {
+        if isDemo {
             wheel.showDemo()
         }
     }

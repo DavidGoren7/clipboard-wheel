@@ -9,12 +9,12 @@ final class WheelViewModel: ObservableObject {
     @Published var isPresented = false
 
     static let sampleItems: [ClipItem] = [
-        "Hold ⌘V to open the wheel",
-        "Let go over a slice to paste it",
-        "Right-click a slice to pin it",
-        "hello@example.com",
-        "Let go in the middle to cancel",
-    ].map { ClipItem(content: .text($0), lastUsed: Date()) }
+        ("Hold ⌘V to open the wheel", false),
+        ("Let go over a slice to paste it", false),
+        ("Right-click a slice to pin it", true),
+        ("hello@example.com", false),
+        ("Let go in the middle to cancel", false),
+    ].map { ClipItem(content: .text($0.0), pinned: $0.1, lastUsed: Date()) }
 }
 
 /// The wheel: a glass disc split into one slice per item, with the hovered slice lit up.
@@ -94,19 +94,21 @@ struct WheelView: View {
         }
     }
 
+    /// Labels sit in the middle of the ring.
+    private var labelRadius: CGFloat { (inner + outer) / 2 }
+
     private var labels: some View {
         let c = CGPoint(x: WheelPanel.side / 2, y: WheelPanel.side / 2)
-        let midRadius = (inner + outer) / 2
         return ForEach(Array(model.items.enumerated()), id: \.element.id) { index, item in
             SliceLabel(
                 item: item,
                 isHovered: index == model.hoveredIndex,
                 showsPin: model.canPin && item.pinned,
-                maxWidth: labelWidth,
+                maxWidth: labelWidth(atAngle: geometry.centerAngle(ofSlice: index)),
                 maxLines: labelLines,
                 imageProvider: imageProvider
             )
-            .position(Self.point(c, angle: geometry.centerAngle(ofSlice: index), radius: midRadius))
+            .position(Self.point(c, angle: geometry.centerAngle(ofSlice: index), radius: labelRadius))
         }
     }
 
@@ -125,12 +127,16 @@ struct WheelView: View {
 
     // MARK: - Layout helpers
 
-    /// Width a label can use: the slice's width at mid-radius, capped.
-    private var labelWidth: CGFloat {
+    /// Width a label can use without crossing into the next slice or past the rim.
+    /// Top and bottom labels are limited by the slice's width; side labels by the rim.
+    private func labelWidth(atAngle angle: Double) -> CGFloat {
         let count = model.items.count
-        guard count > 2 else { return 120 }
-        let chord = 2 * (inner + outer) / 2 * sin(.pi / CGFloat(count))
-        return min(110, chord - 10)
+        let x = abs(sin(angle)) * labelRadius
+        let y = abs(cos(angle)) * labelRadius
+        let rimLimit = outer - 10
+        let rimRoom = 2 * ((rimLimit * rimLimit - y * y).squareRoot() - x)
+        let sliceRoom = count > 2 ? 2 * labelRadius * sin(.pi / CGFloat(count)) - 8 : .greatestFiniteMagnitude
+        return max(60, min(120, sliceRoom, rimRoom))
     }
 
     private var labelLines: Int {

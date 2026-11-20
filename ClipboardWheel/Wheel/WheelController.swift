@@ -86,15 +86,20 @@ final class WheelController {
         feedback.tick(sound: settings.soundEnabled, haptic: settings.hapticEnabled)
     }
 
-    /// Opens the wheel for a few seconds without the hotkey (for screenshots):
-    /// launch with `--show-wheel`.
+    /// Shows the wheel with sample items (never your real clipboard) in the middle of the
+    /// main screen for 30 seconds, for screenshots: launch with `--show-wheel`.
     func showDemo() {
-        open()
-        if viewModel.items.isEmpty {
-            viewModel.items = WheelViewModel.sampleItems
-        }
+        guard !isOpen, let screen = NSScreen.main else { return }
+        isOpen = true
+        center = NSPoint(x: screen.frame.midX, y: screen.frame.midY)
+        restoreCursorTo = nil
+        viewModel.items = WheelViewModel.sampleItems
+        viewModel.canPin = true
+        viewModel.hoveredIndex = 1
+        panel.show(centeredAt: center)
+        viewModel.isPresented = true
         demoCloseTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(10))
+            try? await Task.sleep(for: .seconds(30))
             guard !Task.isCancelled else { return }
             _ = self?.close(commit: false)
         }

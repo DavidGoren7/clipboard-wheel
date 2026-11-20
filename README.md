@@ -2,7 +2,17 @@
 
 A radial clipboard picker for macOS. **Tap ⌘V** and it pastes like normal. **Hold ⌘V** and a glass wheel of your recent copies pops up at your cursor. Move toward a slice and let go to paste it.
 
-> Status: early development (v0.1 in progress).
+<p align="center">
+  <img src="docs/wheel.png" width="340" alt="The Clipboard Wheel open with five slices; the hovered slice is highlighted and one slice shows a pin">
+</p>
+
+## Install
+
+1. Download **Clipboard-Wheel-0.1.0.zip** from the [latest release](https://github.com/DavidGoren7/clipboard-wheel/releases/latest), unzip it, and drag **Clipboard Wheel** into your Applications folder.
+2. Open it. The app isn't notarized by Apple, so the first time macOS says it can't check it for malware. Click **Done**, then go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to Clipboard Wheel.
+3. Follow the welcome window to allow **Accessibility** (see [Permissions](#permissions)).
+
+Requires macOS 14 or later.
 
 ## How it works
 
@@ -56,7 +66,7 @@ scripts/install.sh
 
 To keep the Accessibility permission across rebuilds, sign with your Apple ID: copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and put your team ID in it (Xcode → Settings → Accounts shows it). Without it, the app is signed "to run locally" and macOS may ask for Accessibility again after each rebuild.
 
-The project file is generated from `project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen). After changing `project.yml`, run `xcodegen generate`.
+The project file is generated from `project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen). After changing `project.yml`, run `xcodegen generate`. The app icon is drawn by `swift scripts/make-icon.swift`, and `scripts/install.sh --show-wheel` opens the wheel with sample items for 30 seconds (that's how `docs/wheel.png` was captured).
 
 The wheel logic (slots, pinning, eviction, slice math) lives in `Packages/ClipboardWheelCore` and can be tested without Xcode:
 
